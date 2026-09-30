@@ -1,0 +1,80 @@
+The C program provided below demonstrates how to perform an insertion at the end of a circular linked list using only a Head pointer.
+
+#include <stdio.h>#include <stdlib.h>
+// Structure for a nodestruct Node {
+    int data;
+    struct Node* next;
+};
+// Function to insert a node at the end using only a Head pointerstruct Node* insertAtEndHead(struct Node* head, int value) {
+    // 1. Allocate memory for the new node
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        printf("Memory allocation failed!\n");
+        return head;
+    }
+    newNode->data = value;
+
+    // 2. Case 1: If the list is empty
+    if (head == NULL) {
+        head = newNode;
+        newNode->next = head; // Point to itself to maintain circular nature
+    } 
+    // 3. Case 2: If the list already has nodes
+    else {
+        struct Node* temp = head;
+        
+        // Traverse the list until temp reaches the current last node
+        while (temp->next != head) {
+            temp = temp->next;
+        }
+        
+        // Link adjustment
+        temp->next = newNode;   // Old last node points to the new node
+        newNode->next = head;   // New node points back to the head
+    }
+
+    return head;
+}
+// Function to display the circular linked listvoid display(struct Node* head) {
+    if (head == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+
+    struct Node* temp = head;
+    printf("Circular Linked List: ");
+    
+    do {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    } while (temp != head); // Stop when we wrap back around to the head
+    
+    printf("(Head)\n");
+}
+int main() {
+    struct Node* head = NULL; // Initialize empty list
+
+    // Insert elements at the end
+    head = insertAtEndHead(head, 10);
+    head = insertAtEndHead(head, 20);
+    head = insertAtEndHead(head, 30);
+    head = insertAtEndHead(head, 40);
+
+    // Output the resulting list
+    display(head);
+
+    return 0;
+}
+
+## Core Logic Breakdown
+
+* The Traversal Loop: Because we do not have a tail pointer, the code utilizes while (temp->next != head) to actively scan for the node that links back to the beginning. This traversal brings the runtime to O(n) time complexity.
+* Pointer Redirection: Once the loop finishes, temp sits at the final node. temp->next is linked to newNode, and newNode->next hooks back into head to sustain the continuous loop.
+
+Would you like to build on top of this Head pointer implementation? Let me know if you want to add functions for:
+
+* Insertion at the beginning (updating the head)
+* Deletion from the end or beginning
+* Searching for a specific item in the list
+
+
