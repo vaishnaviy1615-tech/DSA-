@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the Node structure
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Function to insert a node at the beginning (O(1) Time Complexity)
+struct Node* insertAtBeginning(struct Node* tail, int value) {
+    // 1. Allocate memory for the new node
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        printf("Memory allocation failed!\n");
+        return tail;
+    }
+    newNode->data = value;
+
+    // 2. If the list is empty, initialize it by pointing the node to itself
+    if (tail == NULL) {
+        newNode->next = newNode;
+        return newNode; // The new node becomes the tail itself
+    }
+
+    // 3. Point the new node to the current head (which is tail->next)
+    newNode->next = tail->next;
+
+    // 4. Update the tail's next pointer to look at the new head
+    tail->next = newNode;
+
+    // Return the unchanged tail pointer
+    return tail;
+}
+
+// Function to print the circular linked list
+void printList(struct Node* tail) {
+    if (tail == NULL) {
+        printf("The list is empty.\n");
+        return;
+    }
+
+    // Head is always tail->next
+    struct Node* temp = tail->next; 
+    
+    printf("Circular Linked List: ");
+    do {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    } while (temp != tail->next); // Stop when we loop back to the head
+    
+    printf("(head again)\n");
+}
+
+int main() {
+    struct Node* tail = NULL;
+
+    // Insert elements at the beginning
+    printf("Inserting 30 at the beginning...\n");
+    tail = insertAtBeginning(tail, 30);
+    printList(tail);
+
+    printf("\nInserting 20 at the beginning...\n");
+    tail = insertAtBeginning(tail, 20);
+    printList(tail);
+
+    printf("\nInserting 10 at the beginning...\n");
+    tail = insertAtBeginning(tail, 10);
+    printList(tail);
+
+    // Freeing memory before exiting (Bonus Best Practice)
+    if (tail != NULL) {
+        struct Node* head = tail->next;
+        struct Node* current = head;
+        struct Node* nextNode;
+        do {
+            nextNode = current->next;
+            free(current);
+            current = nextNode;
+        } while (current != head);
+    }
+
+    return 0;
+}
