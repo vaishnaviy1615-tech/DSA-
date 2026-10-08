@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX 100
+struct Stack {
+    int top;
+    char items[MAX][MAX];
+};
+
+void initStack(struct Stack* s) {
+    s->top = -1;
+}
+
+int isFull(struct Stack* s) {
+    return s->top == MAX - 1;
+}
+
+int isEmpty(struct Stack* s) {
+    return s->top == -1;
+}
+
+void push(struct Stack* s, char* str) {
+    if (isFull(s)) {
+        printf("Stack Overflow\n");
+        exit(1);
+    }
+    strcpy(s->items[++(s->top)], str);
+}
+
+void pop(struct Stack* s, char* target) {
+    if (isEmpty(s)) {
+        printf("Stack Underflow\n");
+        exit(1);
+    }
+    strcpy(target, s->items[(s->top)--]);
+}
+
+
+int isOperator(char ch) {
+    return (ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '^');
+}
+
+
+void postfixToInfix(char* postfix, char* infixResult) {
+    struct Stack s;
+    initStack(&s);
+    
+    char op1[MAX], op2[MAX];
+    char tempStr[MAX];
+    
+    for (int i = 0; postfix[i] != '\0'; i++) {
+        char current = postfix[i];
+       
+        if (isalnum(current)) {
+            tempStr[0] = current;
+            tempStr[1] = '\0';
+            push(&s, tempStr);
+        } 
+        
+        else if (isOperator(current)) {
+           
+            pop(&s, op1); 
+            pop(&s, op2); 
+            
+            
+            sprintf(tempStr, "(%s%c%s)", op2, current, op1);
+            
+            
+            push(&s, tempStr);
+        }
+    }
+    
+    
+    pop(&s, infixResult);
+}
+
+int main() {
+    char postfix[MAX] = "ab*c+";
+    char infix[MAX];
+    
+    printf("Postfix Expression: %s\n", postfix);
+    postfixToInfix(postfix, infix);
+    printf("Infix Expression:   %s\n", infix);
+    
+   
+    char postfix2[MAX] = "abc/-";
+    postfixToInfix(postfix2, infix);
+    printf("\nPostfix Expression: %s\n", postfix2);
+    printf("Infix Expression:   %s\n", infix);
+    
+    return 0;
+}
